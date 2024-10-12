@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM-checkpoint1</title>
+</head>
+
+<body>
+  <div class="cart-item">
+    <p class="item-name">Item 1</p>
+    <p class="item-price">$20</p>
+    <div class="control-buttons">
+      <button class="minus-btn">-</button>
+      <span class="quantity">1</span>
+      <button class="plus-btn">+</button>
+    </div>
+    <button class="delete-btn">Delete</button>
+    <button class="like-btn">❤</button>
+  </div>
+
+  <div class="cart-item">
+    <p class="item-name">Item 2</p>
+    <p class="item-price">$15</p>
+    <div class="control-buttons">
+      <button class="minus-btn">-</button>
+      <span class="quantity">1</span>
+      <button class="plus-btn">+</button>
+    </div>
+    <button class="delete-btn">Delete</button>
+    <button class="like-btn">❤</button>
+  </div>
+
+  <div class="total-price">
+    Total: $<span id="total">35</span>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // updating the total price
+      const updateTotalPrice = () => {
+        let total = 0;
+        document.querySelectorAll('.cart-item').forEach((item) => {
+          const price = parseFloat(item.getAttribute('data-price'));
+          const quantity = parseInt(item.querySelector('.quantity').textContent);
+          total += price * quantity;
+        });
+        document.getElementById('total').textContent = total.toFixed(2);
+      };
+
+      // handling quantity adjustments
+      document.querySelectorAll('.cart-item').forEach((item) => {
+        const minusBtn = item.querySelector('.minus-btn');
+        const plusBtn = item.querySelector('.plus-btn');
+        const quantitySpan = item.querySelector('.quantity');
+
+        // Decrease quantity
+        minusBtn.addEventListener('click', () => {
+          let quantity = parseInt(quantitySpan.textContent);
+          if (quantity > 1) {
+            quantitySpan.textContent = quantity - 1;
+            updateTotalPrice();
+          }
+        });
+
+        // Increase quantity
+        plusBtn.addEventListener('click', () => {
+          let quantity = parseInt(quantitySpan.textContent);
+          quantitySpan.textContent = quantity + 1;
+          updateTotalPrice();
+        });
+      });
+
+      // deletion of items
+      document.querySelectorAll('.delete-btn').forEach((deleteBtn) => {
+        deleteBtn.addEventListener('click', (e) => {
+          const item = e.target.closest('.cart-item');
+          item.remove();
+          updateTotalPrice();
+        });
+      });
+
+      // liking items
+      document.querySelectorAll('.like-btn').forEach((likeBtn) => {
+        likeBtn.addEventListener('click', (e) => {
+          const btn = e.target;
+          btn.classList.toggle('liked');
+          btn.style.color = btn.classList.contains('liked') ? 'red' : 'black';
+        });
+      });
+
+      // Initialize the total price on page load
+      updateTotalPrice();
+    });
+
+  </script>
+
+</body>
+
+</html>
